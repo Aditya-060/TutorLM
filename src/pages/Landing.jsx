@@ -36,8 +36,8 @@ const Landing = () => {
                     >
                         {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                     </button>
-                    <Link to="/app" className="hidden sm:block text-sm font-bold text-brand-text dark:text-white hover:opacity-70 transition-opacity">Login</Link>
-                    <Link to="/app" className="bg-[#076653] hover:bg-[#0C342C] text-white dark:bg-[#E2FBCE] dark:hover:bg-[#076653] dark:text-[#0f172a] px-5 sm:px-6 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">Sign Up</Link>
+                    <Link to="/auth" className="hidden sm:block text-sm font-bold text-brand-text dark:text-white hover:opacity-70 transition-opacity">Login</Link>
+                    <Link to="/auth" className="bg-[#076653] hover:bg-[#0C342C] text-white dark:bg-[#E2FBCE] dark:hover:bg-[#076653] dark:text-[#0f172a] px-5 sm:px-6 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">Sign Up</Link>
                 </div>
             </nav>
 
@@ -64,7 +64,7 @@ const Landing = () => {
 
                     {/* CTAs */}
                     <div className="flex flex-col sm:flex-row items-center gap-4">
-                        <Link to="/app" className="bg-[#076653] hover:bg-[#0C342C] text-white dark:bg-[#E2FBCE] dark:hover:bg-[#076653] dark:text-[#0f172a] px-8 py-4 rounded-full text-[15px] font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 flex items-center gap-3 transition-all relative z-20">
+                        <Link to="/auth" className="bg-[#076653] hover:bg-[#0C342C] text-white dark:bg-[#E2FBCE] dark:hover:bg-[#076653] dark:text-[#0f172a] px-8 py-4 rounded-full text-[15px] font-bold shadow-xl hover:shadow-2xl hover:-translate-y-1 flex items-center gap-3 transition-all relative z-20">
                             <span>Get Started</span>
                             <ArrowRight className="w-5 h-5" />
                         </Link>

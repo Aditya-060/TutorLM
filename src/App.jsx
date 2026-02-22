@@ -15,7 +15,10 @@ import SavedDoubts from './pages/SavedDoubts';
 import Progress from './pages/Progress';
 import WeakTopics from './pages/WeakTopics';
 import Collaborative from './pages/Collaborative';
+import Auth from './pages/Auth';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/common/ProtectedRoute';
 
 // A helper component to conditionally wrap the app in the Layout if not on the landing page
 const AppRoutes = () => {
@@ -32,34 +35,47 @@ const AppRoutes = () => {
         );
     }
 
-    return (
-        <Layout>
+    const isAuthPage = location.pathname === '/auth';
+    if (isAuthPage) {
+        return (
             <Routes>
-                <Route path="/app" element={<Dashboard />} />
-                <Route path="/workspace" element={<Workspace />} />
-                <Route path="/uploads" element={<Uploads />} />
-                <Route path="/insights" element={<Insights />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/chat" element={<Chat />} />
-                <Route path="/practice" element={<Practice />} />
-                <Route path="/saved" element={<SavedDoubts />} />
-                <Route path="/progress" element={<Progress />} />
-                <Route path="/weak-topics" element={<WeakTopics />} />
-                <Route path="/collaborative" element={<Collaborative />} />
+                <Route path="/auth" element={<Auth />} />
             </Routes>
-        </Layout>
+        );
+    }
+
+    return (
+        <ProtectedRoute>
+            <Layout>
+                <Routes>
+                    <Route path="/app" element={<Dashboard />} />
+                    <Route path="/workspace" element={<Workspace />} />
+                    <Route path="/uploads" element={<Uploads />} />
+                    <Route path="/insights" element={<Insights />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/library" element={<Library />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/chat" element={<Chat />} />
+                    <Route path="/practice" element={<Practice />} />
+                    <Route path="/saved" element={<SavedDoubts />} />
+                    <Route path="/progress" element={<Progress />} />
+                    <Route path="/weak-topics" element={<WeakTopics />} />
+                    <Route path="/collaborative" element={<Collaborative />} />
+                </Routes>
+            </Layout>
+        </ProtectedRoute>
     );
 };
 
 function App() {
     return (
-        <ThemeProvider>
-            <Router>
-                <AppRoutes />
-            </Router>
-        </ThemeProvider>
+        <AuthProvider>
+            <ThemeProvider>
+                <Router>
+                    <AppRoutes />
+                </Router>
+            </ThemeProvider>
+        </AuthProvider>
     );
 }
 

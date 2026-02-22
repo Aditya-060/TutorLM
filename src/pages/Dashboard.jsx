@@ -1,7 +1,26 @@
 import React from 'react';
 import { ChevronRight, Calendar, Star, TrendingUp, DollarSign, Send, Play, Compass } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
+    const { user } = useAuth();
+
+    let firstName = "USER";
+
+    if (user?.user_metadata?.name) {
+        // If full name exists → use it
+        firstName = user.user_metadata.name.split(" ")[0].toUpperCase();
+    } else if (user?.email) {
+        // Fallback: clean email username
+        const emailName = user.email.split("@")[0];
+
+        // Remove numbers
+        const cleanName = emailName.replace(/[0-9]/g, "");
+
+        // Take only first part (before surname if possible)
+        firstName = cleanName.substring(0, 6).toUpperCase();
+    }
+
     return (
         <div className="w-full h-full max-w-[1200px] mx-auto flex flex-col gap-6 font-sans animate-fade-in">
 
@@ -12,7 +31,7 @@ const Dashboard = () => {
                 <div className="lg:col-span-8 rounded-[32px] overflow-hidden relative shadow-lg shadow-brand-primary/10 bg-gradient-to-br from-[#277484] via-[#75a6a3] to-[#fad5c4] p-8 md:p-12 flex flex-col justify-center gap-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                     <div className="z-10 relative">
                         <p className="text-white/90 font-semibold mb-2 text-lg">Welcome back to your workspace</p>
-                        <h1 className="text-white text-5xl sm:text-6xl font-bold tracking-tight">Good Morning, User 👋</h1>
+                        <h1 className="text-white text-5xl sm:text-6xl font-bold tracking-tight">Good Morning, {firstName} 👋</h1>
                     </div>
 
                     <div className="flex flex-wrap gap-10 z-10 relative">

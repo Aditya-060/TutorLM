@@ -1,7 +1,44 @@
-import React from 'react';
-import { Search, Bell, Settings, Edit3, Share2, Clock, Flame, Award, Brain, Target, Shield, ArrowUpRight, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Bell, Settings, Edit3, Share2, Clock, Flame, Award, Brain, Target, Shield, ArrowUpRight, User, Check, X } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
+    const { user, updateProfile } = useAuth();
+    const [isEditing, setIsEditing] = useState(false);
+    const [editName, setEditName] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const [error, setError] = useState('');
+
+    const currentName = user?.user_metadata?.name || 'User';
+    const email = user?.email || 'No email provided';
+
+    useEffect(() => {
+        setEditName(currentName);
+    }, [currentName]);
+
+    const handleSave = async () => {
+        if (!editName.trim()) {
+            setError('Name cannot be empty');
+            return;
+        }
+
+        setIsSaving(true);
+        setError('');
+
+        try {
+            const result = await updateProfile(editName.trim());
+            if (result.success) {
+                setIsEditing(false);
+            } else {
+                setError(result.error);
+            }
+        } catch (err) {
+            setError('Failed to update profile');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     return (
         <div className="flex w-full h-full">
             <div className="flex-1 p-10 pt-12 pb-24 max-w-5xl mx-auto overflow-y-auto">
@@ -26,8 +63,10 @@ const Profile = () => {
                             <Settings className="w-5 h-5" />
                         </button>
                         <div className="flex items-center gap-3 border-l border-brand-dark/10 dark:border-white/10 pl-6">
-                            <span className="text-sm font-bold text-brand-dark dark:text-white">Alex Rivers</span>
-                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Alex&backgroundColor=f4bf96" alt="Profile" className="w-10 h-10 rounded-full border border-white/20" />
+                            <span className="text-sm font-bold text-brand-dark dark:text-white uppercase">{currentName.split(' ')[0]}</span>
+                            <div className="w-10 h-10 rounded-full border border-white/20 bg-[#f4bf96] flex items-center justify-center font-bold text-[#076653] uppercase shadow-[0_0_15px_rgba(244,191,150,0.4)]">
+                                {currentName.charAt(0)}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -45,17 +84,54 @@ const Profile = () => {
 
                     <div className="flex-1 flex flex-col justify-center">
                         <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-4">
-                                <h1 className="text-3xl font-black text-[#076653] dark:text-[#E2FBCE]">Alex Rivers</h1>
-                                <span className="px-3 py-1 bg-[#d3bcce] dark:bg-[#076653]/20 text-[#076653] dark:text-[#E2FBCE] text-[10px] font-bold tracking-widest uppercase rounded-full border border-[#c4a9be] dark:border-[#076653]/30">Level 42 AI Architect</span>
+                            <div className="flex flex-col gap-1 w-full max-w-sm">
+                                {isEditing ? (
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={editName}
+                                            onChange={(e) => setEditName(e.target.value)}
+                                            className="text-3xl font-black text-[#076653] dark:text-[#E2FBCE] bg-white/50 dark:bg-black/20 px-3 py-1 rounded-xl outline-none border border-[#076653]/30 focus:border-[#076653] w-full"
+                                            autoFocus
+                                        />
+                                        {error && <span className="absolute -bottom-5 left-2 text-xs text-red-500 font-bold">{error}</span>}
+                                    </div>
+                                ) : (
+                                    <h1 className="text-3xl font-black text-[#076653] dark:text-[#E2FBCE]">{currentName}</h1>
+                                )}
+                                <span className="text-sm font-bold text-brand-dark/50 dark:text-white/40">{email}</span>
                             </div>
-                            <div className="flex gap-2 relative z-10">
-                                <button className="flex items-center gap-2 px-5 py-2.5 bg-[#076653] hover:bg-[#0C342C] text-white text-sm font-bold rounded-xl shadow-sm">
-                                    <Edit3 className="w-4 h-4" /> Edit Profile
-                                </button>
-                                <button className="flex items-center gap-2 px-5 py-2.5 bg-[#dbcdc4] dark:bg-white/5 hover:bg-[#d0c0b6] dark:hover:bg-white/10 text-[#076653] dark:text-white text-sm font-bold rounded-xl">
-                                    <Share2 className="w-4 h-4" /> Share
-                                </button>
+
+                            <div className="flex gap-2 relative z-10 shrink-0 self-start">
+                                {isEditing ? (
+                                    <>
+                                        <button
+                                            onClick={handleSave}
+                                            disabled={isSaving}
+                                            className="flex items-center gap-2 px-5 py-2.5 bg-[#076653] hover:bg-[#0C342C] text-white text-sm font-bold rounded-xl shadow-sm disabled:opacity-50"
+                                        >
+                                            {isSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />} Save
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setIsEditing(false);
+                                                setEditName(currentName);
+                                                setError('');
+                                            }}
+                                            disabled={isSaving}
+                                            className="flex items-center gap-2 px-5 py-2.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm font-bold rounded-xl disabled:opacity-50"
+                                        >
+                                            <X className="w-4 h-4" /> Cancel
+                                        </button>
+                                    </>
+                                ) : (
+                                    <button
+                                        onClick={() => setIsEditing(true)}
+                                        className="flex items-center gap-2 px-5 py-2.5 bg-[#076653] hover:bg-[#0C342C] text-white text-sm font-bold rounded-xl shadow-sm"
+                                    >
+                                        <Edit3 className="w-4 h-4" /> Edit Name
+                                    </button>
+                                )}
                             </div>
                         </div>
 
